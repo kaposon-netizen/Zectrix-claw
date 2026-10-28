@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="card">
+    <view class="card-title">📅 桌面周课表</view>
+    <view class="card-desc">显示当前保存或系统预设的课程，请核对实际课表。左右滑动可查看整周，修改后一起保存。</view>
+    <scroll-view scroll-x="true" class="week-scroll">
+      <view class="week-table">
+        <view class="week-header"><view class="period-cell">节次</view><view wx:for="{{days}}" wx:key="name" class="week-cell week-day">{{item.name}}</view></view>
+        <block wx:for="{{[0, 1, 2, 3, 4, 5]}}" wx:for-item="period" wx:key="*this">
+          <view class="week-row">
+            <view class="period-cell">第{{period + 1}}节</view>
+            <view wx:for="{{days}}" wx:for-item="day" wx:for-index="dayIndex" wx:key="name" class="week-cell">
+              <input value="{{day.courses[period]}}" placeholder="课程" bindinput="onCourseInput" data-day="{{dayIndex}}" data-period="{{period}}" />
+            </view>
+          </view>
+        </block>
+        <view class="week-row"><view class="period-cell">备忘</view>
+          <view wx:for="{{days}}" wx:for-index="dayIndex" wx:key="name" class="week-cell"><input value="{{item.note}}" placeholder="备忘" bindinput="onNoteInput" data-day="{{dayIndex}}" /></view>
+        </view>
+      </view>
+    </scroll-view>
+    <view wx:if="{{!loaded}}" class="card-desc">正在加载课表…</view>
+    <button class="btn btn-secondary btn-block" disabled="{{!loaded}}" bindtap="choosePhoto">📷 拍照识别课表</button>
+    <button class="btn btn-primary btn-block save-week" disabled="{{!loaded}}" bindtap="saveWeekSchedule">💾 保存整周课表</button>
+    <view class="card-desc">保存后，正在查看课表的在线设备会刷新画面。</view>
+  </view>
+</view>

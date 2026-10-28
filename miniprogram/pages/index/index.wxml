@@ -1,0 +1,206 @@
+<!-- pages/index/index.wxml -->
+<view class="container">
+  <!-- Device Status Header -->
+  <view class="device-card">
+    <view class="device-left">
+      <view class="device-name">📱 Note 4 墨水屏</view>
+      <view class="device-sub">16灰阶无蓝光护眼陪伴 · 画面: {{currentModeName}}</view>
+      <view class="quick-mode-strip">
+        <view class="mode-chip" catchtap="quickSwitchMode" data-mode="task">📋 作业</view>
+        <view class="mode-chip" catchtap="quickPushArt">🎨 名画</view>
+        <view class="mode-chip" catchtap="quickSwitchMode" data-mode="timetable">📅 课表</view>
+        <view class="mode-chip" catchtap="quickSwitchMode" data-mode="habit">🌟 打卡</view>
+        <view class="mode-chip" catchtap="quickSwitchMode" data-mode="menu">🧭 菜单</view>
+      </view>
+    </view>
+    <view class="device-right">
+      <view class="badge {{online ? 'badge-online' : 'badge-offline'}}">
+        {{online ? '● 在线就绪' : '○ 待命中'}}
+      </view>
+      <view class="battery-text">🔋 {{battery !== null ? battery + '%' : '已接电'}}</view>
+      <view class="star-pill" catchtap="goToHabits">⭐ {{starBalance}} 星</view>
+    </view>
+  </view>
+
+  <view class="card screen-card">
+    <view class="card-title"><text>📟 设备屏幕</text><text class="link-more" bindtap="captureScreen">{{screenLoading ? '采集中…' : '刷新画面'}}</text></view>
+    <image wx:if="{{screenImage}}" class="screen-image" src="{{screenImage}}" mode="aspectFit" />
+    <view wx:else class="card-desc">点击刷新，查看设备最近完成刷新的实际画面。</view>
+    <view wx:if="{{screenCapturedAt}}" class="card-desc">采集时间 {{screenCapturedAt}}；画面不会自动刷新</view>
+  </view>
+
+  <view wx:if="{{pendingDictationCount > 0}}" class="card" bindtap="goToPractice" data-tab="dictation">
+    ✍️ {{pendingDictationCount}} 次听写待批改，点击查看 ›
+  </view>
+
+  <view class="card" bindtap="openPhotoText">
+    <view class="card-title">📷 拍照识字 <text>›</text></view>
+    <view class="card-desc">识别作业、课表或通知，核对后复制到输入框。</view>
+  </view>
+
+  <view class="card" bindtap="openPresets"><view class="card-title">📚 分年级学习内容 <text>›</text></view><view class="card-desc">选择生字词、成语和古诗。</view></view>
+
+  <view class="card" bindtap="openContentEntry"><view class="card-title">✍️ 录入学习内容 <text>›</text></view><view class="card-desc">手动输入或拍照，整理作业、古诗和其他内容。</view></view>
+
+  <!-- Quick Overview 4-grid -->
+  <view class="stat-grid">
+    <view class="stat-box" bindtap="goToTasks">
+      <view class="stat-val" style="color:#2563eb;">{{taskStats.done}}/{{taskStats.total}}</view>
+      <view class="stat-lbl">今日作业进度</view>
+    </view>
+    <view class="stat-box" bindtap="goToHabits">
+      <view class="stat-val" style="color:#ea580c;">{{habitStats.done}}/{{habitStats.total}}</view>
+      <view class="stat-lbl">习惯打卡</view>
+    </view>
+    <view class="stat-box" bindtap="goToMistakes">
+      <view class="stat-val" style="color:#dc2626;">{{mistakesCount}}</view>
+      <view class="stat-lbl">待消灭错题</view>
+    </view>
+    <view class="stat-box" bindtap="goToReport">
+      <view class="stat-val" style="color:#16a34a;">{{focusMin}}m</view>
+      <view class="stat-lbl">今日专注</view>
+    </view>
+  </view>
+
+  <!-- Remote Pomodoro Focus Card -->
+  <view class="card focus-card">
+    <view class="card-title" style="margin-bottom:12rpx;">
+      <text>🔥 远程花火 / 蜡烛番茄钟</text>
+      <text class="focus-status-tag {{focusStatus.active ? 'active' : ''}}">
+        {{focusStatus.active ? (focusStatus.paused ? '⏸ 已暂停' : '● 专注倒计时中') : '100px 冬青黑体大字'}}
+      </text>
+    </view>
+
+    <view class="focus-banner">
+      <view class="focus-timer-left">
+        <view class="focus-big-time">{{focusTimeFormatted}}</view>
+        <view class="focus-sub-info">
+          {{focusStatus.active ? (focusStatus.style === 'candle' ? '🕯️ 静谧蜡烛模式运行中' : '🔥 火花引线模式运行中') : '远程一键开启，设备本地零闪烁跑秒'}}
+        </view>
+      </view>
+      <view wx:if="{{focusStatus.active}}" class="focus-ctrl-btns">
+        <view class="btn-sm btn-focus-warn" bindtap="toggleFocusPause">
+          {{focusStatus.paused ? '▶️ 继续' : '⏸ 暂停'}}
+        </view>
+        <view class="btn-sm btn-danger" bindtap="stopFocus">⏹ 结束</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!focusStatus.active}}" class="focus-setup">
+      <view class="focus-min-row">
+        <view class="min-pill {{focusMinutes === 5 ? 'active' : ''}}" bindtap="setFocusMin" data-min="5">5分</view>
+        <view class="min-pill {{focusMinutes === 15 ? 'active' : ''}}" bindtap="setFocusMin" data-min="15">15分</view>
+        <view class="min-pill {{focusMinutes === 25 ? 'active' : ''}}" bindtap="setFocusMin" data-min="25">25分(标准)</view>
+        <view class="min-pill {{focusMinutes === 30 ? 'active' : ''}}" bindtap="setFocusMin" data-min="30">30分</view>
+        <view class="min-pill {{focusMinutes === 45 ? 'active' : ''}}" bindtap="setFocusMin" data-min="45">45分</view>
+      </view>
+      <view class="focus-style-row">
+        <view class="style-chip {{focusStyle === 'spark' ? 'active' : ''}}" bindtap="setFocusStyle" data-style="spark">🔥 火花引线</view>
+        <view class="style-chip {{focusStyle === 'candle' ? 'active' : ''}}" bindtap="setFocusStyle" data-style="candle">🕯️ 静谧蜡烛</view>
+        <view class="btn-start-focus" bindtap="startFocus">🚀 开启番茄专注</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 16-Grayscale World Masterpieces Carousel -->
+  <view class="card" wx:if="{{artList.length > 0}}">
+    <view class="card-title">
+      <text>🎨 16灰阶世界名画一键推屏</text>
+      <text class="link-more" bindtap="goToPractice" data-tab="screensaver">查看画廊 ›</text>
+    </view>
+    <scroll-view class="art-scroll" scroll-x="true" enable-flex="true">
+      <block wx:for="{{artList}}" wx:key="id">
+        <view class="art-mini-card" bindtap="pushArtItem" data-id="{{item.id}}" data-title="{{item.title}}">
+          <image class="art-thumb" src="{{baseUrl}}/api/pocketclaw/mp/art_preview/{{item.id}}" mode="aspectFill" lazy-load="true"></image>
+          <view class="art-mini-info">
+            <view class="art-mini-title">《{{item.title}}》</view>
+            <view class="art-mini-sub">{{item.artist}}</view>
+            <view class="art-mini-btn">🚀 推屏展示</view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- Quick Navigation Modules (8 Core Tools) -->
+  <view class="card">
+    <view class="card-title">
+      <text>🧭 小学生核心伴学工具箱</text>
+      <text class="link-more" bindtap="goToMistakes">📕 错题消灭 ({{mistakesCount}}) ›</text>
+    </view>
+    <view class="nav-grid-4">
+      <view class="nav-item" bindtap="goToPractice" data-tab="dictation">
+        <text class="nav-icon">✍️</text>
+        <text class="nav-text">生字听写</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="poem">
+        <text class="nav-icon">📜</text>
+        <text class="nav-text">古诗背诵</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="arith">
+        <text class="nav-icon">🔢</text>
+        <text class="nav-text">口算闯关</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="vocab">
+        <text class="nav-icon">🔤</text>
+        <text class="nav-text">英语生词</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="reading">
+        <text class="nav-icon">📖</text>
+        <text class="nav-text">分级阅读</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="idiom">
+        <text class="nav-icon">🏮</text>
+        <text class="nav-text">每日成语</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="screensaver">
+        <text class="nav-icon">🎨</text>
+        <text class="nav-text">名画屏保</text>
+      </view>
+      <view class="nav-item" bindtap="goToPractice" data-tab="menu">
+        <text class="nav-icon">📱</text>
+        <text class="nav-text">菜单排序</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Week timetable -->
+  <view class="card" bindtap="goToTimetable">
+    <view class="card-title">
+      <text>📅 周课表</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="card-desc">查看和编辑周一至周五的课程与备忘。</view>
+  </view>
+
+  <!-- Daily Idiom Card -->
+  <view class="card">
+    <view class="card-title">
+      <text>📜 每日国学成语</text>
+      <view class="btn-sm btn-primary" catchtap="pushIdiom">推送到墨水屏</view>
+    </view>
+    <view class="idiom-box">
+      <view class="idiom-title">
+        <text class="idiom-word">{{dailyIdiom.idiom}}</text>
+        <text class="idiom-py">({{dailyIdiom.pinyin}})</text>
+      </view>
+      <view class="idiom-mean">{{dailyIdiom.meaning}}</view>
+      <view wx:if="{{dailyIdiom.example}}" class="idiom-ex">例: {{dailyIdiom.example}}</view>
+    </view>
+  </view>
+
+  <!-- Parent Message Push Card -->
+  <view class="card">
+    <view class="card-title">
+      <text>💌 亲子远程温馨便签</text>
+    </view>
+    <view class="card-desc">输入一句鼓励的话，立即在 Note 4 墨水屏全屏弹出并语音播报：</view>
+    <view class="quick-msg-pills">
+      <view class="msg-pill" bindtap="setMsg" data-text="宝贝今天写作业特别认真，为你点赞！">👍 为你点赞</view>
+      <view class="msg-pill" bindtap="setMsg" data-text="写完作业早点休息，明天有你爱吃的草莓！">🍓 早点休息</view>
+      <view class="msg-pill" bindtap="setMsg" data-text="深呼吸慢慢想，相信你一定能解出来！">💪 相信自己</view>
+    </view>
+    <textarea class="msg-input" placeholder="输入你想对宝贝说的话..." value="{{parentMsg}}" bindinput="onMsgInput" auto-height></textarea>
+    <view class="btn btn-primary" style="margin-top:20rpx;" bindtap="sendMessage">🚀 立即发送到孩子设备</view>
+  </view>
+</view>

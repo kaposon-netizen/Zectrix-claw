@@ -1,0 +1,55 @@
+menu "Xiaozhi Assistant"
+
+config BOARD_TYPE_ZECTRIX_S3_EPAPER_4_2
+    bool "zectrix-s3-epaper-4.2 FT firmware"
+    default y
+    depends on IDF_TARGET_ESP32S3
+    help
+        This local repository has been reduced to a single FT-only firmware
+        for the zectrix-s3-epaper-4.2 board.
+
+
+# WiFi 凭证：只做「编译期注入」的容器，**默认全空**。真实值放构建机的 .env，
+# 由 build.sh 写进 sdkconfig（见 build.sh 的 injections）。源码与仓库里零明文。
+config DEFAULT_WIFI_SSID
+    string "预置 WiFi SSID（留空=不预置，走配网）"
+    default ""
+
+config DEFAULT_WIFI_PASSWORD
+    string "预置 WiFi 密码"
+    default ""
+
+config ALT_WIFI_SSID
+    string "备用 WiFi SSID（如公司网）"
+    default ""
+
+config ALT_WIFI_PASSWORD
+    string "备用 WiFi 密码"
+    default ""
+
+config ALT2_WIFI_SSID
+    string "备用 WiFi SSID 2"
+    default ""
+
+config ALT2_WIFI_PASSWORD
+    string "备用 WiFi 密码 2"
+    default ""
+
+config POCKETCLAW_WAKE_WORD
+    bool "Enable local wake word (requires model partition)"
+    default n
+    depends on IDF_TARGET_ESP32S3
+    help
+        Enables local WakeNet detection of the bundled Ni Hao Xiao Zhi model.
+        Requires the optional 16m_wake partition table and model image. Keeps
+        the microphone active while online and increases power consumption.
+
+config POCKETCLAW_USB_PROVISION
+    bool "Temporary physical USB device credential provisioning"
+    default n
+    help
+        Allow credential replacement over the physical console for 60 seconds
+        after boot. Use only a temporary trusted provisioning build and replace
+        it with a normal build afterwards. Never enable on unattended devices.
+
+endmenu

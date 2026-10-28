@@ -1,0 +1,1 @@
+.type {padding:20rpx;background:#f4f7fc;border-radius:14rpx;margin-bottom:18rpx;}.extra{margin-top:14rpx}.body{min-height:300rpx;margin:18rpx 0}.row{display:flex;gap:16rpx}.row button{flex:1;font-size:26rpx}

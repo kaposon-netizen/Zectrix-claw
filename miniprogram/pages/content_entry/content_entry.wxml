@@ -1,0 +1,10 @@
+<view class="container"><view class="card">
+ <view class="card-title">✍️ 录入学习内容</view>
+ <view class="card-desc">选择类型后输入文字，或拍照识别并核对；最后点击保存。照片会发送给已配置的视觉模型。</view>
+ <picker range="{{names}}" value="{{index}}" bindchange="changeType"><view class="type">录入类型：{{type.name}} ▾</view></picker>
+ <input value="{{title}}" bindinput="onTitle" placeholder="{{type.title}}" />
+ <input wx:if="{{type.extra}}" value="{{extra}}" bindinput="onExtra" placeholder="{{type.extra}}" class="extra" />
+ <textarea value="{{body}}" bindinput="onBody" maxlength="-1" placeholder="{{type.body}}" class="body" />
+ <view wx:if="{{index === 5 && vocabEntries.length}}"><view>识别出的生词，请逐项核对后保存</view><view wx:for="{{vocabEntries}}" wx:key="index"><input value="{{item.word}}" data-index="{{index}}" data-field="word" bindinput="onVocabEntry" placeholder="单词"/><input value="{{item.meaning}}" data-index="{{index}}" data-field="meaning" bindinput="onVocabEntry" placeholder="中文释义"/><input value="{{item.example}}" data-index="{{index}}" data-field="example" bindinput="onVocabEntry" placeholder="例句（可不填）"/><input value="{{item.example_cn}}" data-index="{{index}}" data-field="example_cn" bindinput="onVocabEntry" placeholder="例句翻译（可不填）"/></view></view>
+ <view class="row"><button class="btn btn-secondary" disabled="{{busy}}" bindtap="choosePhoto">📷 拍照识别</button><button class="btn btn-primary" loading="{{busy}}" disabled="{{busy}}" bindtap="save">保存内容</button></view>
+</view></view>

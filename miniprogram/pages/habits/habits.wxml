@@ -1,0 +1,66 @@
+<!-- pages/habits/habits.wxml -->
+<view class="container">
+  <view class="card"><button class="btn btn-secondary" bindtap="openPhotoEntry">📷 拍照录入</button></view>
+  <!-- Habit Stars Header -->
+  <view class="habit-header">
+    <view class="star-badge">⭐ {{stats.stars || 0}} 颗星</view>
+    <view class="habit-title">今日好习惯已完成 {{stats.done}}/{{stats.total}}</view>
+    <view class="habit-sub">最长连续打卡 {{stats.max_streak || 0}} 天 · 坚持就是胜利！</view>
+  </view>
+
+  <!-- Add New Habit -->
+  <view class="card">
+    <view class="card-title">添加自律好习惯</view>
+    <view class="icon-selector">
+      <view class="icon-chip {{selectedIcon === '📖' ? 'active' : ''}}" bindtap="selectIcon" data-icon="📖">📖 晨读</view>
+      <view class="icon-chip {{selectedIcon === '🏃' ? 'active' : ''}}" bindtap="selectIcon" data-icon="🏃">🏃 运动</view>
+      <view class="icon-chip {{selectedIcon === '🎒' ? 'active' : ''}}" bindtap="selectIcon" data-icon="🎒">🎒 整理</view>
+      <view class="icon-chip {{selectedIcon === '👀' ? 'active' : ''}}" bindtap="selectIcon" data-icon="👀">👀 护眼</view>
+      <view class="icon-chip {{selectedIcon === '🛏️' ? 'active' : ''}}" bindtap="selectIcon" data-icon="🛏️">🛏️ 作息</view>
+      <view class="icon-chip {{selectedIcon === '⭐' ? 'active' : ''}}" bindtap="selectIcon" data-icon="⭐">⭐ 习惯</view>
+    </view>
+    <view class="add-row">
+      <input placeholder="输入好习惯名称 (例: 跳绳500个)..." value="{{newHabitName}}" bindinput="onNameInput" />
+      <view class="btn-sm btn-primary" bindtap="addHabit">添加</view>
+    </view>
+  </view>
+
+  <!-- Habits List -->
+  <view class="card">
+    <view class="card-title">今日打卡清单</view>
+    <view class="habit-list">
+      <block wx:for="{{habits}}" wx:key="id">
+        <view class="habit-row">
+          <view class="habit-left" bindtap="toggleHabit" data-id="{{item.id}}">
+            <checkbox checked="{{item.done}}" color="#2563eb" />
+            <text class="habit-icon">{{item.icon || '⭐'}}</text>
+            <view class="habit-info">
+              <text class="habit-name {{item.done ? 'done' : ''}}">{{item.name}}</text>
+              <text wx:if="{{item.streak > 1}}" class="streak-tag">🔥 连打{{item.streak}}天</text>
+            </view>
+          </view>
+          <view class="del-btn" bindtap="deleteHabit" data-id="{{item.id}}">✕</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Wishes Fulfillment Section -->
+  <view class="card">
+    <view class="card-title">🎁 自律心愿兑换 (余额: {{starBank.balance || stats.star_balance || 0}} ⭐)</view>
+    <view class="wish-grid">
+      <block wx:for="{{starBank.wishes}}" wx:key="id">
+        <view class="wish-card {{item.redeemed ? 'redeemed' : ''}}">
+          <view class="wish-top">
+            <text class="wish-icon">{{item.icon || '🎁'}}</text>
+            <text class="wish-cost">{{item.stars_needed}} 星</text>
+          </view>
+          <text class="wish-title">{{item.title}}</text>
+          <view wx:if="{{item.redeemed}}" class="wish-done-tag">已兑现</view>
+          <button wx:elif="{{(starBank.balance || stats.star_balance || 0) >= item.stars_needed}}" class="wish-btn" bindtap="redeemWish" data-id="{{item.id}}">✨ 帮TA兑换</button>
+          <view wx:else class="wish-need-tag">还差 {{item.stars_needed - (starBank.balance || stats.star_balance || 0)}} 星</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

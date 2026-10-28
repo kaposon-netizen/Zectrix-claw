@@ -1,0 +1,4 @@
+.gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx; }
+.art { background: #f8fafc; border-radius: 16rpx; padding: 14rpx; font-size: 25rpx; }
+.art image { width: 100%; height: 190rpx; background: #e2e8f0; }
+.art text, .empty { color: #64748b; font-size: 22rpx; }

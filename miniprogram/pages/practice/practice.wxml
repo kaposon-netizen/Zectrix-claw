@@ -1,0 +1,307 @@
+<!-- pages/practice/practice.wxml -->
+<view class="container">
+  <!-- Nav Pills -->
+  <view class="pill-bar">
+    <view class="pill {{tab === 'dictation' ? 'active' : ''}}" bindtap="switchTab" data-tab="dictation">生字听写</view>
+    <view class="pill {{tab === 'poem' ? 'active' : ''}}" bindtap="switchTab" data-tab="poem">古诗背诵</view>
+    <view class="pill {{tab === 'arith' ? 'active' : ''}}" bindtap="switchTab" data-tab="arith">口算闯关</view>
+    <view class="pill {{tab === 'vocab' ? 'active' : ''}}" bindtap="switchTab" data-tab="vocab">英语生词</view>
+    <view class="pill {{tab === 'reading' ? 'active' : ''}}" bindtap="switchTab" data-tab="reading">分级短文</view>
+    <view class="pill {{tab === 'news' ? 'active' : ''}}" bindtap="switchTab" data-tab="news">小学新鲜事</view>
+  </view>
+
+  <view wx:if="{{tab === 'poem'}}" class="card"><button class="btn btn-secondary" data-index="3" bindtap="openEntry">✍️ 手动或拍照录入古诗</button><button class="btn btn-secondary" data-index="4" bindtap="openEntry">✍️ 手动或拍照录入成语</button></view>
+  <view wx:if="{{tab === 'vocab'}}" class="card"><button class="btn btn-secondary" data-index="5" bindtap="openEntry">📷 拍照或批量录入英语生词</button></view>
+  <view wx:if="{{tab === 'news'}}" class="card"><button class="btn btn-secondary" data-index="7" bindtap="openEntry">✍️ 手动或拍照录入新鲜事</button></view>
+  <view wx:if="{{tab === 'arith'}}" class="card"><button class="btn btn-secondary" data-index="11" bindtap="openEntry">✍️ 手动或拍照录入口算题</button></view>
+
+  <!-- Section 1: 生字听写 -->
+  <view wx:if="{{tab === 'dictation'}}">
+    <view class="card">
+      <view class="card-title">✍️ 语文生字词听写设置</view>
+      <view class="card-desc">输入词语或拍照导入，Note 4 会根据选择的词单语音朗读（屏幕不显示汉字，严格防剧透）：</view>
+      
+      <input class="input" style="border:1rpx solid #e2e8f0; border-radius:12rpx; padding:14rpx 20rpx; font-size:28rpx; margin-bottom:16rpx;" placeholder="词单名称（如：第一单元生字、期中易错词）" value="{{dictationTitle}}" bindinput="onDictationTitleInput" />
+
+      <view class="photo-action-bar" style="margin-bottom:16rpx;">
+        <view class="btn btn-secondary btn-block photo-btn" bindtap="chooseDictationPhoto">
+          <text style="margin-right:8rpx;">📷</text> 拍照/选图识别生字表 (OCR)
+        </view>
+      </view>
+      
+      <view class="preset-words-row">
+        <view class="word-chip" bindtap="setPresetWords" data-type="三年级精选">三年级精选</view>
+        <view class="word-chip" bindtap="setPresetWords" data-type="二年级字词">二年级字词</view>
+        <view class="word-chip" bindtap="setPresetWords" data-type="期中易错词">期中易错词</view>
+        <view class="word-chip" bindtap="setPresetWords" data-type="五年级上册必背">五年级上册</view>
+      </view>
+      
+      <textarea placeholder="例如: 温暖, 认真, 遵守, 奇迹, 灿烂, 丰富" value="{{dictationInput}}" bindinput="onDictationInput"></textarea>
+      <view class="btn btn-primary btn-block" style="margin-top:20rpx;" bindtap="saveDictation">💾 保存词单并推送到 Note 4 开练</view>
+    </view>
+
+    <!-- 📋 听写完成记录与家长检查批改卡片 -->
+    <view class="card" wx:if="{{dictationRecords && dictationRecords.length > 0}}">
+      <view class="card-title">
+        <text>📋 听写记录与家长批改</text>
+        <text class="badge badge-primary">最新</text>
+      </view>
+      <view class="card-desc">孩子在 Note 4 完成听写后在此检查核对。支持拍照自动批改与人工核对，错字与书写不规范均自动收录错题本：</view>
+      <block wx:for="{{dictationRecords}}" wx:key="id">
+        <view class="record-box" style="border:1rpx solid {{item.status === 'pending' ? '#f59e0b' : '#e2e8f0'}}; background:{{item.status === 'pending' ? '#fffbeb' : '#fafafa'}}; border-radius:12rpx; padding:16rpx; margin-top:16rpx;">
+          <view style="display:flex; justify-content:space-between; align-items:center;">
+            <text style="font-weight:700; font-size:28rpx;">《{{item.title}}》</text>
+            <text class="badge {{item.status === 'pending' ? 'badge-warning' : 'badge-primary'}}">{{item.status === 'pending' ? '待批改' : (item.auto_checked ? '🤖 拍照批改' : '已批改')}}</text>
+          </view>
+          <view style="font-size:24rpx; color:#64748b; margin-top:6rpx;">共 {{item.count}} 词 · 完成于 {{item.time_str}}</view>
+
+          <!-- 待批改模式：支持拍照智能批改与人工对照批改 -->
+          <block wx:if="{{item.status === 'pending'}}">
+            <!-- 方式一：拍照自动检查核对 (推荐) -->
+            <view style="background:#eff6ff; border:1rpx solid #bfdbfe; border-radius:10rpx; padding:14rpx; margin-top:14rpx;">
+              <view style="display:flex; justify-content:space-between; align-items:center;">
+                <text style="font-size:26rpx; font-weight:700; color:#1e40af;">📸 拍照自动检查核对</text>
+                <text class="badge badge-primary">推荐</text>
+              </view>
+              <view style="font-size:22rpx; color:#475569; margin-top:6rpx;">
+                拍照学生手写听写本，AI 智能辨析错字与笔画间架书写不规范，<strong>错字与不规范生字均自动录入错题本</strong>：
+              </view>
+              <view class="btn btn-primary btn-block" style="margin-top:12rpx; padding:16rpx; font-size:26rpx; background:linear-gradient(135deg, #2563eb, #1d4ed8); display:flex; align-items:center; justify-content:center; gap:8rpx;" bindtap="chooseAutoCheckPhoto" data-recid="{{item.id}}">
+                <text>📷</text> 拍照/选图自动批改听写 (+2⭐)
+              </view>
+            </view>
+
+            <!-- 方式二：人工核对 (支持多状态标记) -->
+            <view style="margin-top:14rpx;">
+              <view style="font-size:24rpx; font-weight:600; color:#334155;">✍️ 或人工核对 (点击字词标记)：</view>
+              <view style="font-size:22rpx; color:#64748b; margin-top:4rpx;">点击切换：[✓ 正确] ➜ [❌ 错字] ➜ [⚠️ 书写不规范]，均列入错题本</view>
+              <view style="display:flex; flex-wrap:wrap; gap:12rpx; margin-top:10rpx;">
+                <block wx:for="{{item.words}}" wx:for-item="w" wx:key="index">
+                  <view class="word-chip {{w.status === 'wrong' ? 'wrong' : w.status === 'irregular' ? 'irregular' : ''}}"
+                        style="font-size:26rpx; padding:8rpx 16rpx; border-radius:10rpx; border:1rpx solid {{w.status === 'wrong' ? '#ef4444' : w.status === 'irregular' ? '#f59e0b' : '#cbd5e1'}}; background:{{w.status === 'wrong' ? '#fee2e2' : w.status === 'irregular' ? '#fef3c7' : '#ffffff'}}; color:{{w.status === 'wrong' ? '#b91c1c' : w.status === 'irregular' ? '#b45309' : '#334155'}};"
+                        bindtap="cycleWordStatus" data-recid="{{item.id}}" data-word="{{w[0]}}">
+                    {{index + 1}}. {{w[0]}} {{w.status === 'wrong' ? '❌错字' : w.status === 'irregular' ? '⚠️不规范' : ''}}
+                  </view>
+                </block>
+              </view>
+
+              <view style="margin-top:16rpx; padding-top:12rpx; border-top:1rpx dashed #cbd5e1; display:flex; gap:12rpx; align-items:center;">
+                <input class="input" style="flex:1; border:1rpx solid #cbd5e1; border-radius:8rpx; padding:10rpx 14rpx; font-size:24rpx;" placeholder="家长评语（如：书写工整）" value="{{item.comment_input}}" bindinput="onRecordCommentInput" data-recid="{{item.id}}" />
+                <view class="btn btn-primary btn-sm" bindtap="submitRecordReview" data-recid="{{item.id}}">✓ 确认批改 (+2⭐)</view>
+              </view>
+            </view>
+          </block>
+
+          <!-- 已批改模式展示 -->
+          <block wx:else>
+            <view wx:if="{{item.auto_checked}}" style="background:#f0fdf4; border:1rpx solid #bbf7d0; border-radius:8rpx; padding:10rpx 14rpx; margin-top:10rpx;">
+              <view style="font-weight:700; color:#166534; font-size:24rpx;">🤖 AI 拍照批改得分：{{item.check_result.score}}分</view>
+              <view style="color:#15803d; font-size:22rpx; margin-top:4rpx;">{{item.check_result.summary || item.comment}}</view>
+            </view>
+            <view style="font-size:24rpx; line-height:1.6; margin-top:8rpx;">
+              <view><text style="color:#dc2626; font-weight:700;">❌ 错字：</text>{{item.mistakes && item.mistakes.length > 0 ? item.mistakes.join('、') : '无'}}</view>
+              <view wx:if="{{item.irregular_words_display}}"><text style="color:#d97706; font-weight:700;">⚠️ 书写不规范：</text>{{item.irregular_words_display}}</view>
+              <view style="font-size:22rpx; color:#64748b; margin-top:4rpx;">
+                奖励 {{item.stars_rewarded}}⭐ · 错字与不规范生字已全部归入【错题消灭本】
+              </view>
+            </view>
+          </block>
+        </view>
+      </block>
+    </view>
+
+    <!-- 📚 听写词单库 -->
+    <view class="card" wx:if="{{dictationSets && dictationSets.length > 0}}">
+      <view class="card-title">📚 听写词单库 (点击设为当前)</view>
+      <block wx:for="{{dictationSets}}" wx:key="id">
+        <view style="display:flex; justify-content:space-between; align-items:center; padding:14rpx; border:1rpx solid {{item.title === dictationTitle ? '#10b981' : '#e2e8f0'}}; border-radius:10rpx; margin-top:12rpx; background:{{item.title === dictationTitle ? '#ecfdf5' : '#ffffff'}};">
+          <view>
+            <view style="font-weight:700; font-size:26rpx;">{{item.title}} ({{item.count}}词)</view>
+            <view style="font-size:22rpx; color:#64748b;">{{item.preview}}</view>
+          </view>
+          <view style="display:flex; gap:10rpx;">
+            <view class="btn btn-sm {{item.title === dictationTitle ? 'btn-primary' : 'btn-secondary'}}" bindtap="selectDictationSet" data-setid="{{item.id}}">
+              {{item.title === dictationTitle ? '✓ 听写中' : '设为当前'}}
+            </view>
+            <view class="btn btn-sm btn-danger" bindtap="deleteDictationSet" data-setid="{{item.id}}">删除</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Section 2: 古诗背诵 -->
+  <view wx:if="{{tab === 'poem'}}" class="card">
+    <view class="card-title">
+      <text>小学必背古诗词</text>
+      <text class="badge badge-primary">当前: {{curPoemTitle}}</text>
+    </view>
+    <view class="poems-list">
+      <block wx:for="{{poems}}" wx:key="title">
+        <view class="poem-item {{item.title === curPoemTitle ? 'active' : ''}}" bindtap="selectPoem" data-title="{{item.title}}">
+          <view class="poem-left">
+            <view class="poem-title">{{item.title}} <text class="poem-author">〔{{item.dynasty}}〕{{item.author}}</text></view>
+            <view class="poem-line">{{item.lines[0]}} {{item.lines[1]}}</view>
+          </view>
+          <view class="btn-sm {{item.title === curPoemTitle ? 'btn-primary' : 'btn-secondary'}}">
+            {{item.title === curPoemTitle ? '✓ 考核中' : '设为目标'}}
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Section 3: 口算闯关 -->
+  <view wx:if="{{tab === 'arith'}}" class="card">
+    <view class="card-title">口算难度与题量</view>
+    <view class="config-label">年级难度：</view>
+    <view class="choice-group">
+      <view class="choice-chip {{arithGrade === 1 ? 'active' : ''}}" bindtap="setGrade" data-g="1">一年级 (20以内加减)</view>
+      <view class="choice-chip {{arithGrade === 2 ? 'active' : ''}}" bindtap="setGrade" data-g="2">二年级 (100以内表内乘除)</view>
+      <view class="choice-chip {{arithGrade === 3 ? 'active' : ''}}" bindtap="setGrade" data-g="3">三年级 (多位数加减/乘一位数)</view>
+    </view>
+    <view class="config-label">练习题量：</view>
+    <view class="choice-group">
+      <view class="choice-chip {{arithCount === 10 ? 'active' : ''}}" bindtap="setCount" data-c="10">10 道题</view>
+      <view class="choice-chip {{arithCount === 20 ? 'active' : ''}}" bindtap="setCount" data-c="20">20 道题</view>
+    </view>
+    <view class="btn btn-primary btn-block" style="margin-top:24rpx;" bindtap="saveArith">💾 保存口算配置</view>
+  </view>
+
+  <!-- Section 4: 英语生词 -->
+  <view wx:if="{{tab === 'vocab'}}">
+    <view class="card">
+      <view class="card-title">添加新英语单词</view>
+      <input placeholder="单词 (例: apple)" value="{{vocabWord}}" bindinput="onVWord" style="margin-bottom:12rpx;" />
+      <input placeholder="中文释义 (例: 苹果)" value="{{vocabMean}}" bindinput="onVMean" style="margin-bottom:12rpx;" />
+      <input placeholder="英文例句 (例: I eat an apple.)" value="{{vocabEx}}" bindinput="onVEx" style="margin-bottom:12rpx;" />
+      <input placeholder="例句翻译 (例: 我吃一个苹果。)" value="{{vocabExCn}}" bindinput="onVExCn" style="margin-bottom:16rpx;" />
+      <view class="btn btn-primary btn-block" bindtap="addVocab">➕ 加入生词本</view>
+    </view>
+    <view class="card">
+      <view class="card-title">生词列表 ({{vocabList.length}})</view>
+      <view class="vocab-list">
+        <block wx:for="{{vocabList}}" wx:key="id">
+          <view class="vocab-row">
+            <view class="v-left">
+              <view class="v-word">{{item.word}} <text class="v-mean">{{item.meaning}}</text></view>
+              <view wx:if="{{item.example}}" class="v-ex">{{item.example}}</view>
+            </view>
+            <view class="del-btn" bindtap="deleteVocab" data-id="{{item.id}}">✕</view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- Section 5: 英语分级短文 -->
+  <view wx:if="{{tab === 'reading'}}" class="card">
+    <view class="card-title">
+      <text>英语短文阅读篇目</text>
+      <text class="badge badge-primary">当前: {{curReadingTitle}}</text>
+    </view>
+    <view class="photo-action-bar" style="margin-bottom:20rpx;">
+      <view class="btn btn-primary btn-block photo-btn" bindtap="chooseReadingPhoto">
+        <text style="margin-right:8rpx;">📷</text> 拍照/选图录入新短文
+      </view>
+    </view>
+    <view class="reading-list">
+      <block wx:for="{{readingArticles}}" wx:key="id">
+        <view class="reading-card {{item.id === curReadingId ? 'active' : ''}}" bindtap="selectReading" data-id="{{item.id}}">
+          <view class="r-top">
+            <text class="r-title">《{{item.title}}》</text>
+            <text class="badge badge-primary">{{item.level}}</text>
+          </view>
+          <view class="r-preview">{{item.sentences[0][0]}}</view>
+          <view class="r-footer">
+            <text class="r-count">共 {{item.sentences.length}} 句</text>
+            <view class="btn-sm {{item.id === curReadingId ? 'btn-primary' : 'btn-secondary'}}">
+              {{item.id === curReadingId ? '✓ 阅读中' : '设为当前篇目'}}
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Section 6: 小学新鲜事 -->
+  <view wx:if="{{tab === 'news'}}">
+    <!-- 地区设置卡片 -->
+    <view class="card">
+      <view class="card-title">
+        <text>📍 关注地区与相关性</text>
+        <text class="badge badge-primary">{{newsRegion || '全国'}}</text>
+      </view>
+      <view class="card-desc">系统将智能识别报道与您设定地区的相关性，仅展示该地区专属动态及全国通用赛事展会：</view>
+      <view style="display:flex; gap:12rpx; margin-top:16rpx; align-items:center;">
+        <input class="input" style="flex:1; border:1rpx solid #e2e8f0; border-radius:12rpx; padding:12rpx 20rpx; font-size:26rpx;" placeholder="例：北京市海淀区 / 上海市 / 全国" value="{{newsRegionInput}}" bindinput="onNewsRegionInput" />
+        <view class="btn btn-primary" style="padding:14rpx 24rpx; font-size:26rpx;" bindtap="saveNewsRegion">保存</view>
+      </view>
+      <view style="display:flex; gap:10rpx; flex-wrap:wrap; margin-top:14rpx;">
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="全国">🌐 全国</view>
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="北京市">🏛️ 北京市</view>
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="海淀区">🎓 海淀区</view>
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="上海市">🏙️ 上海市</view>
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="广州市">🌸 广州市</view>
+        <view class="word-chip" bindtap="quickSelectRegion" data-region="深圳市">🚀 深圳市</view>
+      </view>
+    </view>
+
+    <!-- 关键词过滤卡片 -->
+    <view class="card">
+      <view class="card-title">🏷️ 关键词白名单与黑名单</view>
+      <view style="margin-top:10rpx;">
+        <view style="font-size:24rpx; color:#475569; margin-bottom:8rpx;">🌟 <b>白名单</b>（逗号隔开，匹配内容置顶推荐）：</view>
+        <input class="input" style="border:1rpx solid #e2e8f0; border-radius:12rpx; padding:12rpx 20rpx; font-size:26rpx; margin-bottom:14rpx;" placeholder="例如：少儿科技, 机器人, 航天, 古诗" value="{{newsWhitelistInput}}" bindinput="onNewsWhitelistInput" />
+
+        <view style="font-size:24rpx; color:#475569; margin-bottom:8rpx;">🚫 <b>黑名单</b>（逗号隔开，自动拦截屏蔽）：</view>
+        <input class="input" style="border:1rpx solid #e2e8f0; border-radius:12rpx; padding:12rpx 20rpx; font-size:26rpx; margin-bottom:14rpx;" placeholder="例如：追星, 八卦, 游戏充值, 早恋" value="{{newsBlacklistInput}}" bindinput="onNewsBlacklistInput" />
+
+        <view class="btn btn-secondary btn-block" bindtap="saveNewsKeywords">💾 保存关键词偏好</view>
+      </view>
+    </view>
+
+    <!-- 信源卡片 -->
+    <view class="card">
+      <view class="card-title">
+        <text>📡 关注信源 ({{newsSources.length}}个)</text>
+      </view>
+      <view style="display:flex; flex-wrap:wrap; gap:10rpx; margin-top:12rpx;">
+        <block wx:for="{{newsSources}}" wx:key="id">
+          <view class="word-chip" style="background:#f1f5f9; color:#334155;">
+            <text>{{item.name}}</text>
+            <text style="color:#94a3b8; font-size:20rpx; margin-left:6rpx;">({{item.region}})</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 报道列表卡片 -->
+    <view class="card">
+      <view class="card-title">
+        <text>📰 报道列表 ({{newsItems.length}}篇展示)</text>
+      </view>
+      <view class="card-desc">Note 4 单击上下键选择报道，点播放键查看全文并语音朗读：</view>
+      <view style="margin-top:16rpx;">
+        <block wx:for="{{newsItems}}" wx:key="id">
+          <view style="border:1rpx solid #e2e8f0; border-radius:12rpx; padding:18rpx; margin-bottom:14rpx; background:#ffffff;">
+            <view style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <view style="flex:1;">
+                <view style="display:flex; gap:8rpx; align-items:center; margin-bottom:8rpx; flex-wrap:wrap;">
+                  <text class="badge badge-primary">{{item.category || '活动'}}</text>
+                  <text class="badge" style="background:#f1f5f9; color:#475569;">{{item.region || '全国'}}</text>
+                  <text style="font-size:26rpx; font-weight:700; color:#1e293b;">{{item.is_example ? '示例 · ' : ''}}{{item.title}}</text>
+                </view>
+                <view style="font-size:24rpx; color:#64748b; line-height:1.5;">{{item.summary}}</view>
+                <view style="font-size:22rpx; color:#94a3b8; margin-top:8rpx;">信源：{{item.source}}</view>
+              </view>
+              <view style="margin-left:12rpx;">
+                <view class="btn btn-secondary" style="padding:8rpx 16rpx; font-size:22rpx; color:#ef4444;" bindtap="deleteNews" data-id="{{item.id}}">隐藏</view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</view>

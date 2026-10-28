@@ -1,0 +1,217 @@
+<!-- pages/report/report.wxml -->
+<view class="container">
+  <view class="card">
+    <view class="card-title">家庭管理</view>
+    <view class="btn btn-secondary" bindtap="openTasks">今日作业</view>
+    <view class="btn btn-secondary" style="margin-top:12rpx;" bindtap="openHabits">习惯与星星存折</view>
+    <view class="btn btn-secondary" style="margin-top:12rpx;" bindtap="openTimetable">课程表</view>
+  </view>
+  <view class="card">
+    <view class="card-title">家庭账号</view>
+    <view class="card-desc">多家庭模式需要 HTTPS。账号由服务管理员创建。</view>
+    <block wx:if="{{!familyLoggedIn}}">
+      <input value="{{familyName}}" bindinput="onFamilyName" placeholder="家庭账号" />
+      <input value="{{familyPassword}}" bindinput="onFamilyPassword" password="true" placeholder="家庭密码" style="margin-top:12rpx;" />
+      <view class="btn btn-primary" bindtap="loginFamily" style="margin-top:12rpx;">登录家庭</view>
+    </block>
+    <block wx:else>
+      <view class="card-desc">已登录 · 孩子数 {{familyChildren.length}}</view>
+      <input value="{{deviceIdInput}}" bindinput="onDeviceIdInput" placeholder="输入设备 ID 申请令牌" />
+      <view class="btn btn-secondary" bindtap="issueDeviceToken" style="margin-top:12rpx;">生成设备令牌</view>
+      <view class="btn btn-secondary" bindtap="revokeDeviceToken" style="margin-top:12rpx;">撤销设备令牌</view>
+      <view wx:if="{{issuedDeviceToken}}" class="card-desc" style="margin-top:12rpx;">令牌只显示一次，请安全配置到设备，不要分享：<text selectable="true">{{issuedDeviceToken}}</text><view bindtap="clearIssuedToken">清除显示</view></view>
+      <view class="btn btn-secondary" bindtap="logoutFamily" style="margin-top:12rpx;">退出家庭</view>
+    </block>
+  </view>
+  <view class="card">
+    <view class="card-title">孩子资料</view>
+    <view class="card-desc">用于调整称呼、讲解难度和例子。使用在线模型时，资料会随对话发送给模型服务；可留空或随时清除。</view>
+    <block wx:if="{{familyLoggedIn}}"><picker wx:if="{{familyChildren.length > 1}}" range="{{familyChildren}}" value="{{profileChildIndex}}" bindchange="onProfileChild"><view>选择孩子：{{familyChildren[profileChildIndex]}} ▾</view></picker></block>
+    <input value="{{profileName}}" bindinput="onProfileName" maxlength="40" placeholder="名字或昵称（选填）" />
+    <picker range="{{profileGrades}}" value="{{profileGrade}}" bindchange="onProfileGrade"><view style="padding:16rpx 0;">年级：{{profileGrades[profileGrade]}} ▾</view></picker>
+    <picker range="{{profileGenders}}" value="{{profileGender}}" bindchange="onProfileGender"><view style="padding:16rpx 0;">性别：{{profileGenders[profileGender]}} ▾</view></picker>
+    <textarea value="{{profileInterests}}" bindinput="onProfileInterests" maxlength="200" placeholder="兴趣爱好（选填，例如恐龙、画画）" />
+    <view class="btn btn-primary" bindtap="saveChildProfile" style="margin-top:12rpx;">保存孩子资料</view>
+  </view>
+  <!-- Today's Stats 3-card -->
+  <view class="card">
+    <view class="card-title">📊 今日学习成果大盘</view>
+    <view class="rep-grid">
+      <view class="rep-box">
+        <view class="rep-num" style="color:#2563eb;">{{taskRate}}%</view>
+        <view class="rep-lbl">作业完成率</view>
+      </view>
+      <view class="rep-box">
+        <view class="rep-num" style="color:#ea580c;">{{focusMin}}m</view>
+        <view class="rep-lbl">深度专注学习</view>
+      </view>
+      <view class="rep-box">
+        <view class="rep-num" style="color:#16a34a;">{{vocabCount}}</view>
+        <view class="rep-lbl">词汇累积</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Badges Grid -->
+  <view class="card">
+    <view class="card-title">小学生成长自律勋章</view>
+    <view class="card-desc">孩子在 Note 4 上的每一次专注打卡、诗词背诵都会点亮专属成就：</view>
+    <view class="badge-grid">
+      <block wx:for="{{badges}}" wx:key="id">
+        <view class="badge-item {{item.unlocked ? 'unlocked' : ''}}">
+          <view class="b-icon">{{item.icon}}</view>
+          <view class="b-title">{{item.title}}</view>
+          <view class="b-desc">{{item.desc}}</view>
+          <view class="b-status">{{item.unlocked ? '★ 已点亮' : '○ 练习中'}}</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Card: 🛡️ 19大功能权限与开关控制 -->
+  <view class="card">
+    <view class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <text>🛡️ 19大功能权限与开关</text>
+      <text class="badge" style="background:#dcfce7; color:#15803d; font-size:22rpx; padding:4rpx 12rpx; border-radius:8rpx;">{{enabledCount}}/19 启用</text>
+    </view>
+    <view class="card-desc">全站功能自由开启/停用。停用后 Note 4 墨水屏菜单自动过滤隐藏，语音切入礼貌拦截：</view>
+    <view style="display:flex; flex-direction:column; gap:16rpx; margin-top:16rpx;">
+      <block wx:for="{{featuresList}}" wx:key="key">
+        <view style="display:flex; justify-content:space-between; align-items:center; padding:16rpx 20rpx; background:#f8fafc; border:1rpx solid #e2e8f0; border-radius:12rpx;">
+          <view style="flex:1;">
+            <view style="display:flex; align-items:center; gap:8rpx;">
+              <text style="font-size:28rpx; font-weight:bold; color:#1e293b;">{{item.name}}</text>
+              <text style="font-size:20rpx; color:#64748b; background:#fff; padding:2rpx 8rpx; border-radius:6rpx; border:1rpx solid #e2e8f0;">{{item.category}}</text>
+            </view>
+            <text style="font-size:22rpx; color:#64748b; margin-top:4rpx; display:block;">{{item.desc}}</text>
+          </view>
+          <switch checked="{{item.enabled}}" color="#10b981" bindchange="onToggleFeature" data-key="{{item.key}}" />
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- Card 3: 🦞 学伴小龙虾人设定制 -->
+  <view class="card">
+    <view class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+      <text>🦞 学伴小龙虾人设定制</text>
+      <text class="badge" style="background:#e0f2fe; color:#0284c7; font-size:22rpx; padding:4rpx 12rpx; border-radius:8rpx;">实时同步Note4</text>
+    </view>
+    <view class="card-desc">定制小龙虾对孩子的称呼、语言风格与启发提问提示词：</view>
+
+    <view style="margin-bottom:16rpx;">
+      <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">学伴昵称：</text>
+      <input value="{{compName}}" bindinput="onCompNameInput" placeholder="虾崽、小龙虾、聪聪、Captain" />
+    </view>
+
+    <view style="margin-bottom:16rpx;">
+      <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">语言交流风格：</text>
+      <picker bindchange="onStyleChange" value="{{styleIndex}}" range="{{styleOptions}}">
+        <view class="picker-box" style="padding:16rpx 20rpx; background:#f8fafc; border:1rpx solid #e2e8f0; border-radius:12rpx; font-size:28rpx; color:#1e293b;">
+          {{styleOptions[styleIndex]}} ▼
+        </view>
+      </picker>
+    </view>
+
+    <view style="margin-bottom:16rpx;">
+      <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">性格背景与特质 (Persona Prompt)：</text>
+      <textarea value="{{compPersona}}" bindinput="onCompPersonaInput" placeholder="描述学伴的性格特长..." style="width:100%; height:120rpx; background:#f8fafc; border:1rpx solid #e2e8f0; border-radius:12rpx; padding:16rpx; box-sizing:border-box; font-size:26rpx;" />
+    </view>
+
+    <view style="margin-bottom:16rpx;">
+      <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">墨水屏对话叮嘱与字数限制：</text>
+      <textarea value="{{compGuidance}}" bindinput="onCompGuidanceInput" placeholder="如限制在40字以内、苏格拉底式提问..." style="width:100%; height:120rpx; background:#f8fafc; border:1rpx solid #e2e8f0; border-radius:12rpx; padding:16rpx; box-sizing:border-box; font-size:26rpx;" />
+    </view>
+
+    <view style="display:flex; gap:12rpx; margin-top:20rpx;">
+      <button class="btn btn-secondary btn-sm" style="flex:1;" bindtap="applyPreset" data-type="classic">经典虾崽</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1;" bindtap="applyPreset" data-type="humor">幽默大白</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1;" bindtap="applyPreset" data-type="socratic">启发教练</button>
+    </view>
+  </view>
+
+  <view wx:if="{{familyLoggedIn}}" class="btn btn-primary" bindtap="saveAllSettings" style="margin-bottom:24rpx;">保存学伴人设</view>
+  <!-- Card 4: 🤖 LLM 大模型与 OCR 运行设置 -->
+  <view wx:if="{{!familyLoggedIn}}" class="card">
+    <view class="card-title">🤖 LLM 与 OCR 引擎设置</view>
+    <view class="card-desc">支持服务器本地版本与在线各大商业大模型：</view>
+
+    <!-- LLM Mode Switch -->
+    <view style="margin-bottom:20rpx; padding:16rpx; background:#f8fafc; border-radius:12rpx;">
+      <text style="font-size:26rpx; font-weight:bold; color:#1e293b; display:block; margin-bottom:12rpx;">LLM 运行版本：</text>
+      <radio-group bindchange="onLlmModeChange" style="display:flex; gap:30rpx;">
+        <label style="font-size:26rpx; display:flex; align-items:center;">
+          <radio value="local" checked="{{llmMode === 'local'}}" /> 本地规则/Ollama
+        </label>
+        <label style="font-size:26rpx; display:flex; align-items:center;">
+          <radio value="online" checked="{{llmMode === 'online'}}" /> 在线大模型 (多厂商直连)
+        </label>
+      </radio-group>
+    </view>
+
+    <!-- Online LLM Fields -->
+    <block wx:if="{{llmMode === 'online'}}">
+      <view style="margin-bottom:16rpx;">
+        <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">服务商选择：</text>
+        <picker bindchange="onProviderChange" value="{{providerIndex}}" range="{{providerNames}}">
+          <view class="picker-box" style="padding:16rpx 20rpx; background:#f8fafc; border:1rpx solid #e2e8f0; border-radius:12rpx; font-size:28rpx; color:#1e293b;">
+            {{providerNames[providerIndex]}} ▼
+          </view>
+        </picker>
+      </view>
+
+      <view style="margin-bottom:16rpx;">
+        <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">模型名称：</text>
+        <input value="{{llmModel}}" bindinput="onLlmModelInput" placeholder="deepseek-chat, qwen-plus" />
+      </view>
+
+      <view style="margin-bottom:16rpx;">
+        <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">API Base URL：</text>
+        <input value="{{llmBaseUrl}}" bindinput="onLlmBaseUrlInput" placeholder="https://api.deepseek.com/v1" />
+      </view>
+
+      <view style="margin-bottom:16rpx;">
+        <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">API Key 密钥：</text>
+        <input value="{{llmApiKey}}" bindinput="onLlmApiKeyInput" password="{{!showKey}}" placeholder="sk-..." />
+      </view>
+
+      <view style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16rpx;">
+        <button class="btn btn-secondary btn-sm" bindtap="testLlm">🧪 测试连通性</button>
+        <text wx:if="{{testResult}}" style="font-size:24rpx; color:#16a34a; font-weight:bold;">{{testResult}}</text>
+      </view>
+    </block>
+
+    <!-- OCR Mode Switch -->
+    <view style="margin-top:20rpx; margin-bottom:16rpx; padding:16rpx; background:#f8fafc; border-radius:12rpx;">
+      <text style="font-size:26rpx; font-weight:bold; color:#1e293b; display:block; margin-bottom:12rpx;">拍照 OCR 模式：</text>
+      <radio-group bindchange="onOcrModeChange" style="display:flex; gap:30rpx;">
+        <label style="font-size:26rpx; display:flex; align-items:center;">
+          <radio value="local" checked="{{ocrMode === 'local'}}" /> 服务器本地提取
+        </label>
+        <label style="font-size:26rpx; display:flex; align-items:center;">
+          <radio value="online" checked="{{ocrMode === 'online'}}" /> 在线多模态视觉 (Vision)
+        </label>
+      </radio-group>
+    </view>
+
+    <block wx:if="{{ocrMode === 'online'}}">
+      <view style="margin-bottom:16rpx;">
+        <text style="font-size:26rpx; color:#475569; margin-bottom:8rpx; display:block;">视觉模型 (Vision Model)：</text>
+        <input value="{{ocrModel}}" bindinput="onOcrModelInput" placeholder="gpt-4o-mini, qwen-vl-plus" />
+      </view>
+    </block>
+
+    <view class="btn btn-primary btn-block" style="margin-top:24rpx;" bindtap="saveAllSettings">💾 保存全部人设与 AI 配置</view>
+  </view>
+
+  <!-- Server & Connection Settings -->
+  <view class="card">
+    <view class="card-title">⚙️ 后端主机连接设置</view>
+    <view class="card-desc">配置 Note 4 伴学服务端局域网 IP 或公网域名：</view>
+    <input value="{{baseUrl}}" bindinput="onBaseUrlInput" placeholder="http://192.168.1.xxx:8000" style="margin-bottom:16rpx;" />
+    <view class="btn btn-secondary btn-block" bindtap="saveBaseUrl">保存主机地址</view>
+    <view class="card-desc" style="margin-top:20rpx;">设备画面需要管理令牌。{{hasScreenToken ? '已保存；留空保存可清除。' : '尚未保存。'}}</view>
+    <input value="{{screenTokenInput}}" bindinput="onScreenTokenInput" password="true" placeholder="输入屏幕访问令牌" />
+    <view class="btn btn-secondary btn-block" style="margin-top:12rpx;" bindtap="saveScreenToken">保存或清除令牌</view>
+  </view>
+</view>

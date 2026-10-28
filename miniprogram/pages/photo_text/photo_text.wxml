@@ -1,0 +1,10 @@
+<view class="container">
+  <view class="card">
+    <view class="card-title">拍照识字</view>
+    <view class="card-desc">拍摄课本、作业或通知，识别后可修改并复制到需要填写的地方。图片会发送给已配置的视觉模型。</view>
+    <button class="btn btn-primary" loading="{{busy}}" disabled="{{busy}}" bindtap="choosePhoto">拍照或选择图片</button>
+    <textarea class="result" value="{{text}}" bindinput="onText" maxlength="-1" placeholder="识别结果会显示在这里，也可以直接输入文字" />
+    <button class="btn btn-secondary" bindtap="copyText">复制文字</button>
+    <view class="card-desc" style="margin-top:20rpx;">请核对识别结果，然后粘贴到作业、课表或其他输入框中并保存。</view>
+  </view>
+</view>

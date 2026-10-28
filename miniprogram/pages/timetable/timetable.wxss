@@ -1,0 +1,8 @@
+.week-scroll { width: 100%; margin: 20rpx 0; white-space: nowrap; }
+.week-table { width: 1050rpx; }
+.week-header, .week-row { display: flex; align-items: center; border-bottom: 1rpx solid #e2e8f0; }
+.period-cell { width: 90rpx; flex-shrink: 0; padding: 18rpx 4rpx; color: #64748b; font-size: 22rpx; }
+.week-cell { width: 190rpx; flex-shrink: 0; padding: 8rpx; box-sizing: border-box; }
+.week-day { text-align: center; font-weight: 700; color: #1e293b; }
+.week-cell input { width: 100%; min-width: 0; padding: 10rpx 8rpx; box-sizing: border-box; font-size: 24rpx; }
+.save-week { margin: 20rpx 0; }

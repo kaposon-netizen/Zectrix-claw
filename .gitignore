@@ -1,0 +1,72 @@
+# OS and Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Rust compilation artifacts & large font binaries
+target/
+**/target/
+*.ttf
+*.otf
+
+# Python artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.log
+.pytest_cache/
+
+# ESP-IDF / C++ build artifacts
+build/
+**/build/
+managed_components/
+**/managed_components/
+sdkconfig
+sdkconfig.old
+*.orig
+dependencies.lock
+
+# WeChat Mini Program
+node_modules/
+**/node_modules/
+miniprogram_npm/
+**/miniprogram_npm/
+project.private.config.json
+
+# Sensitive configuration
+.env
+*.pem
+*.key
+
+# 排除非 Note 4 核心伴学系统的外围 SDK、资料包与过程文档（遵从用户要求）
+zectrix-local-push-sdk/
+便利贴开源资料/
+PocketClaw_参赛策划与架构方案.md
+PocketClaw_开发问题复盘与成果沉淀.md
+/项目交接与二次开发指引.md
+/server/功能切换指令速查.md
+/zectrix/.cnb.yml
+/pocketclaw/
+server/docs/
+server/data/
+/data/
+zectrix/docs/
+zectrix/releases/
+
+# 大体积非代码二进制文件
+*.STEP
+*.step
+*.3mf
+*.pdf
+*.tar.gz
+*.zip

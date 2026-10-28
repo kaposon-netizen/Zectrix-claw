@@ -1,0 +1,48 @@
+<!-- pages/tasks/tasks.wxml -->
+<view class="container">
+  <view class="card"><button class="btn btn-secondary" bindtap="openPhotoEntry">📷 拍照录入</button></view>
+  <!-- Group Homework Fast Paste -->
+  <view class="card">
+    <view class="card-title">
+      <text>微信班级群作业粘贴</text>
+      <text class="badge badge-primary">智能解析</text>
+    </view>
+    <textarea class="raw-input" placeholder="直接粘贴老师在群里发的作业通知：&#10;1. 语文：抄写生字两遍&#10;2. 数学：口算练习20题" value="{{rawInput}}" bindinput="onRawInput"></textarea>
+    <view class="btn-row">
+      <view class="btn btn-primary" style="flex:1;" bindtap="submitRaw" data-clear="{{false}}">➕ 解析追加</view>
+      <view class="btn btn-secondary" style="flex:1;" bindtap="submitRaw" data-clear="{{true}}">🔄 清空覆盖</view>
+    </view>
+  </view>
+
+  <!-- Tasks List -->
+  <view class="card">
+    <view class="card-title">
+      <text>今日作业 (<text style="color:#2563eb;">{{stats.done}}/{{stats.total}}</text>)</text>
+      <view class="btn-sm btn-secondary" bindtap="clearDone">清空已完成</view>
+    </view>
+    
+    <view class="single-add-row">
+      <input placeholder="输入单条作业..." value="{{singleInput}}" bindinput="onSingleInput" confirm-type="send" bindconfirm="addSingle" />
+      <view class="btn-sm btn-primary" bindtap="addSingle">添加</view>
+    </view>
+
+    <view class="task-list">
+      <block wx:if="{{tasks.length === 0}}">
+        <view class="empty-tip">今日暂无作业，可以粘贴班级群通知添加～</view>
+      </block>
+      <block wx:for="{{tasks}}" wx:key="id">
+        <view class="task-row">
+          <view class="task-left" bindtap="toggleTask" data-id="{{item.id}}">
+            <checkbox checked="{{item.done}}" color="#2563eb" />
+            <text class="sub-pill {{item.subject === '语文' ? 'sub-chinese' : item.subject === '数学' ? 'sub-math' : item.subject === '英语' ? 'sub-english' : item.subject === '科学' ? 'sub-science' : 'sub-general'}}">{{item.subject || '通用'}}</text>
+            <text class="task-text {{item.done ? 'done' : ''}}">{{item.text}}</text>
+          </view>
+          <view class="task-actions" style="display:flex; align-items:center; gap:16rpx;">
+            <view class="edit-btn" bindtap="onEditTask" data-task="{{item}}" style="font-size:26rpx; color:#2563eb; padding:6rpx;">✏️</view>
+            <view class="del-btn" bindtap="deleteTask" data-id="{{item.id}}">✕</view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

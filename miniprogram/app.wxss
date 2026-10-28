@@ -1,0 +1,120 @@
+/** app.wxss **/
+page {
+  background-color: #f3f6fb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color: #0f172a;
+  box-sizing: border-box;
+}
+
+.container {
+  padding: 28rpx 24rpx;
+}
+
+/* Card Style */
+.card {
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 20rpx rgba(15, 23, 42, 0.05);
+  border: 1rpx solid #e2e8f0;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-desc {
+  font-size: 24rpx;
+  color: #64748b;
+  line-height: 1.65;
+  margin-bottom: 20rpx;
+}
+
+/* Buttons */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  padding: 18rpx 28rpx;
+  transition: all 0.15s ease;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1rpx solid #e2e8f0;
+}
+
+.btn-danger {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-sm {
+  font-size: 24rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 12rpx;
+}
+
+.btn-block {
+  width: 100% !important;
+}
+
+/* Inputs & Textareas */
+input, textarea {
+  background-color: #f8fafc;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus, textarea:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+/* Badges */
+.badge {
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.badge-online {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge-offline {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.badge-primary {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.badge-warn {
+  background-color: #fef3c7;
+  color: #b45309;
+}

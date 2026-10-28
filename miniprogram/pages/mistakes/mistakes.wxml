@@ -1,0 +1,36 @@
+<!-- pages/mistakes/mistakes.wxml -->
+<view class="container">
+  <view class="card"><button class="btn btn-secondary" bindtap="openPhotoEntry">📷 拍照录入</button></view>
+  <view class="card">
+    <view class="card-title">
+      <text>📕 历史错题消灭本 ({{mistakes.length}})</text>
+      <view class="btn-sm btn-secondary" bindtap="clearAll">清空已消灭</view>
+    </view>
+    <view class="card-desc">
+      口算做错算式、听写生字与英语跟读错题自动沉淀在此。在设备端进入“错题消灭”可针对性攻坚！
+    </view>
+
+    <view class="mistakes-list">
+      <block wx:if="{{mistakes.length === 0}}">
+        <view class="empty-success">
+          <text class="empty-icon">🎉</text>
+          <text class="empty-text">太棒啦！当前没有历史错题！</text>
+        </view>
+      </block>
+      <block wx:for="{{mistakes}}" wx:key="id">
+        <view class="mistake-item">
+          <view class="m-left">
+            <view class="m-cat-row">
+              <text class="badge badge-primary">{{item.category === 'arith' ? '口算速练' : item.category === 'dictation' ? '生字听写' : '英语阅读'}}</text>
+              <text wx:if="{{item.count > 1}}" class="badge badge-warn">复错 {{item.count}} 次</text>
+            </view>
+            <view class="m-question">{{item.question}}</view>
+            <view class="m-expected">正确答案: <text style="font-weight:700;">{{item.expected}}</text></view>
+            <view wx:if="{{item.wrong_answer}}" class="m-wrong">历史错答: {{item.wrong_answer}}</view>
+          </view>
+          <view class="btn-sm btn-secondary" bindtap="eliminate" data-id="{{item.id}}">✓ 已消灭</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

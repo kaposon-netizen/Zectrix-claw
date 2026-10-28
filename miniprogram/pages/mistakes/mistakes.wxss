@@ -1,0 +1,66 @@
+/* pages/mistakes/mistakes.wxss */
+.mistakes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.mistake-item {
+  border: 1rpx solid #e2e8f0;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.m-left {
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.m-cat-row {
+  display: flex;
+  gap: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.m-question {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6rpx;
+}
+
+.m-expected {
+  font-size: 24rpx;
+  color: #16a34a;
+}
+
+.m-wrong {
+  font-size: 22rpx;
+  color: #dc2626;
+  margin-top: 4rpx;
+}
+
+.empty-success {
+  text-align: center;
+  padding: 60rpx 0;
+  background-color: #f0fdf4;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.empty-icon {
+  font-size: 56rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #16a34a;
+}

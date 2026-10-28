@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tasks/tasks",
+    "pages/habits/habits",
+    "pages/timetable/timetable",
+    "pages/practice/practice",
+    "pages/mistakes/mistakes",
+    "pages/report/report",
+    "pages/wisdom/wisdom",
+    "pages/photo_text/photo_text",
+    "pages/presets/presets",
+    "pages/content_entry/content_entry"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#2563eb",
+    "navigationBarTitleText": "PocketClaw 小学生学习伴侣",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8fafc"
+  },
+  "tabBar": {
+    "color": "#64748b",
+    "selectedColor": "#2563eb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "伴学今日"
+      },
+      {
+        "pagePath": "pages/practice/practice",
+        "text": "学科进阶"
+      },
+      {
+        "pagePath": "pages/wisdom/wisdom",
+        "text": "素养视野"
+      },
+      {
+        "pagePath": "pages/report/report",
+        "text": "空间管理"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

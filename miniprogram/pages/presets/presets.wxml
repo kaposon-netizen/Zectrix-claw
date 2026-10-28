@@ -1,0 +1,12 @@
+<view class="container"><view class="card">
+  <view class="card-title">📚 分年级预设内容</view>
+  <view class="card-desc">年级为建议难度，不代表指定教材。生字词会保存为当前听写词单；成语、古诗和英语生词加入自定义内容，不覆盖已有同名内容。</view>
+  <picker range="{{categories}}" value="{{category}}" bindchange="onCategory"><view class="filter">内容：{{categories[category]}} ▾</view></picker>
+  <picker range="{{grades}}" value="{{grade}}" bindchange="onGrade"><view class="filter">年级：{{grades[grade]}} ▾</view></picker>
+  <view class="actions"><view class="btn btn-secondary" bindtap="selectAll">全选</view><view class="btn btn-secondary" bindtap="selectNone">不选</view></view>
+  <button class="btn btn-primary save" bindtap="importSelected">导入所选内容（{{selected.length}}）</button>
+  <checkbox-group bindchange="onSelected">
+    <view wx:for="{{items}}" wx:key="id" class="preset-row"><label><checkbox value="{{item.id}}" checked="{{item.checked}}" /> {{item.title}} · {{item.grade}}年级</label></view>
+  </checkbox-group>
+  <view wx:if="{{!items.length}}" class="card-desc">当前没有可选内容</view>
+</view></view>

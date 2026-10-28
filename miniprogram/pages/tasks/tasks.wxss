@@ -1,0 +1,78 @@
+/* pages/tasks/tasks.wxss */
+.raw-input {
+  min-height: 160rpx;
+  margin-bottom: 16rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.single-add-row {
+  display: flex;
+  gap: 12rpx;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.task-row:last-child {
+  border-bottom: none;
+}
+
+.task-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.sub-pill {
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.sub-chinese { background-color: #ffedd5; color: #ea580c; }
+.sub-math { background-color: #dbeafe; color: #2563eb; }
+.sub-english { background-color: #ede9fe; color: #7c3aed; }
+.sub-science { background-color: #ccfbf1; color: #0d9488; }
+.sub-general { background-color: #f1f5f9; color: #475569; }
+
+.task-text {
+  font-size: 28rpx;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.task-text.done {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.del-btn {
+  color: #94a3b8;
+  padding: 10rpx 16rpx;
+  font-size: 26rpx;
+}
+
+.empty-tip {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 26rpx;
+  padding: 36rpx 0;
+}

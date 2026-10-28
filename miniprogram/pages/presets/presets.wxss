@@ -1,0 +1,4 @@
+.filter {padding:20rpx;background:#f4f7fc;border-radius:14rpx;margin-bottom:12rpx;}
+.actions {display:flex;gap:16rpx;margin:20rpx 0;}
+.preset-row {padding:16rpx 0;border-bottom:1rpx solid #edf1f6;}
+.save {margin-top:24rpx;}

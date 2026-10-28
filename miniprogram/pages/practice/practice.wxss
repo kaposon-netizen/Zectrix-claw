@@ -1,0 +1,218 @@
+/* pages/practice/practice.wxss */
+.pill-bar {
+  display: flex;
+  gap: 12rpx;
+  overflow-x: auto;
+  padding-bottom: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.pill {
+  flex-shrink: 0;
+  padding: 10rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  background-color: #ffffff;
+  color: #64748b;
+  border: 1rpx solid #e2e8f0;
+}
+
+.pill.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.preset-words-row {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.word-chip {
+  background-color: #eff6ff;
+  color: #2563eb;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+}
+
+.word-chip.wrong {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border: 1rpx solid #ef4444;
+}
+
+.word-chip.irregular {
+  background-color: #fef3c7;
+  color: #b45309;
+  border: 1rpx solid #f59e0b;
+}
+
+.poems-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.poem-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 14rpx;
+  background-color: #ffffff;
+}
+
+.poem-item.active {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.poem-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  margin-bottom: 4rpx;
+}
+
+.poem-author {
+  font-size: 22rpx;
+  font-weight: normal;
+  color: #64748b;
+}
+
+.poem-line {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+.config-label {
+  font-size: 26rpx;
+  font-weight: 600;
+  margin: 16rpx 0 8rpx 0;
+}
+
+.choice-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.choice-chip {
+  padding: 16rpx;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  border: 1rpx solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.choice-chip.active {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.vocab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.vocab-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #f1f5f9;
+}
+
+.v-word {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.v-mean {
+  font-size: 26rpx;
+  font-weight: normal;
+  color: #0f172a;
+  margin-left: 10rpx;
+}
+
+.v-ex {
+  font-size: 22rpx;
+  color: #64748b;
+  margin-top: 4rpx;
+}
+
+.reading-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.reading-card {
+  border: 1rpx solid #e2e8f0;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  background-color: #ffffff;
+}
+
+.reading-card.active {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.r-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.r-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.r-preview {
+  font-size: 24rpx;
+  color: #64748b;
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+}
+
+.r-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.r-count {
+  font-size: 22rpx;
+  color: #94a3b8;
+}
+
+.del-btn {
+  color: #94a3b8;
+  padding: 10rpx 16rpx;
+  font-size: 26rpx;
+}
+
+.photo-action-bar {
+  display: flex;
+  margin-bottom: 16rpx;
+}
+
+.photo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  padding: 18rpx 24rpx;
+  border-radius: 12rpx;
+}

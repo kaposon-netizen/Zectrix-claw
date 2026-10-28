@@ -1,0 +1,18 @@
+<view class="container">
+  <view class="card"><view class="card-title">拓展内容录入</view><button class="btn btn-secondary" bindtap="openPhotoEntry" data-index="9">费曼主题</button><button class="btn btn-secondary" bindtap="openPhotoEntry" data-index="10">猜猜看</button><button class="btn btn-secondary" bindtap="openPhotoEntry" data-index="12">事实核查</button><button class="btn btn-secondary" bindtap="openPhotoEntry" data-index="13">飞花令</button><button class="btn btn-secondary" bindtap="openPhotoEntry" data-index="16">倒计时</button><view class="card-desc">可手动输入或拍照识别后核对。</view></view>
+  <view class="card" bindtap="openNews">
+    <view class="card-title">📰 小学新鲜事 <text>›</text></view>
+    <view class="card-desc">浏览和管理适合孩子的校园新闻与活动。</view>
+  </view>
+  <view class="card">
+    <view class="card-title">🎨 伴学画廊</view>
+    <view class="card-desc">选择画作推送到在线设备。</view>
+    <view wx:if="{{!artList.length}}" class="empty">暂无画作，请连接服务后下拉刷新。</view>
+    <view class="gallery">
+      <view wx:for="{{artList}}" wx:key="id" class="art" bindtap="pushArt" data-id="{{item.id}}">
+        <image src="{{baseUrl}}/api/pocketclaw/mp/art_preview/{{item.id}}" mode="aspectFit" lazy-load="true" />
+        <view>{{item.title}}</view><text>{{item.artist}}</text>
+      </view>
+    </view>
+  </view>
+</view>
