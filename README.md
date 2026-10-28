@@ -1,5 +1,7 @@
 # PocketClaw · Zectrix Note 4 小学生智能学习伴侣
 
+简体中文 | [English](README.en.md)
+
 **版本：1.0**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
